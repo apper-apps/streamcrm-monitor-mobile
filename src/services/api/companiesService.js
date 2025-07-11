@@ -13,11 +13,14 @@ export const companiesService = {
     return companies.find(company => company.Id === id);
   },
 
-  create: async (companyData) => {
+create: async (companyData) => {
     await new Promise(resolve => setTimeout(resolve, 400));
     const newCompany = {
       Id: Math.max(...companies.map(c => c.Id), 0) + 1,
-      ...companyData,
+      name: companyData.name,
+      industry: companyData.industry,
+      website: companyData.website || "",
+      phone: companyData.phone || "",
       createdAt: new Date().toISOString()
     };
     companies.push(newCompany);

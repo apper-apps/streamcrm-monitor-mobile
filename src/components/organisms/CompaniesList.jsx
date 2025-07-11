@@ -18,11 +18,14 @@ const CompaniesList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: "",
-    industry: ""
+    industry: "",
+    website: "",
+    phone: ""
   });
-  const [formErrors, setFormErrors] = useState({});
+const [formErrors, setFormErrors] = useState({});
+  const [editingCompany, setEditingCompany] = useState(null);
 
   const industryOptions = [
     { value: "Technology", label: "Technology" },
@@ -79,7 +82,7 @@ const CompaniesList = () => {
     }
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const errors = {};
     
     if (!formData.name.trim()) {
@@ -90,11 +93,33 @@ const CompaniesList = () => {
       errors.industry = "Industry is required";
     }
     
+    if (formData.website && !isValidUrl(formData.website)) {
+      errors.website = "Please enter a valid website URL";
+    }
+    
+    if (formData.phone && !isValidPhone(formData.phone)) {
+      errors.phone = "Please enter a valid phone number";
+    }
+    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const isValidUrl = (url) => {
+    try {
+      const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+  const isValidPhone = (phone) => {
+    const phoneRegex = /^[\+]?[\d\s\-\(\)\.]{10,}$/;
+    return phoneRegex.test(phone.trim());
+  };
+
+const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -102,23 +127,57 @@ const CompaniesList = () => {
     }
 
     try {
-      const newCompany = await companiesService.create(formData);
-      setCompanies(prev => [...prev, newCompany]);
-      setFilteredCompanies(prev => [...prev, newCompany]);
+      if (editingCompany) {
+        const updatedCompany = await companiesService.update(editingCompany.Id, formData);
+        setCompanies(prev => prev.map(c => c.Id === editingCompany.Id ? updatedCompany : c));
+        setFilteredCompanies(prev => prev.map(c => c.Id === editingCompany.Id ? updatedCompany : c));
+        toast.success("Company updated successfully!");
+      } else {
+        const newCompany = await companiesService.create(formData);
+        setCompanies(prev => [...prev, newCompany]);
+        setFilteredCompanies(prev => [...prev, newCompany]);
+        toast.success("Company added successfully!");
+      }
       setIsModalOpen(false);
-      setFormData({ name: "", industry: "" });
+      setFormData({ name: "", industry: "", website: "", phone: "" });
       setFormErrors({});
-      toast.success("Company added successfully!");
+      setEditingCompany(null);
     } catch (err) {
-      toast.error("Failed to add company. Please try again.");
-      console.error("Error adding company:", err);
+      toast.error(editingCompany ? "Failed to update company. Please try again." : "Failed to add company. Please try again.");
+      console.error("Error saving company:", err);
     }
   };
 
-  const handleCloseModal = () => {
+  const handleEdit = (company) => {
+    setEditingCompany(company);
+    setFormData({
+      name: company.name,
+      industry: company.industry,
+      website: company.website || "",
+      phone: company.phone || ""
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (company) => {
+    if (window.confirm(`Are you sure you want to delete "${company.name}"? This action cannot be undone.`)) {
+      try {
+        await companiesService.delete(company.Id);
+        setCompanies(prev => prev.filter(c => c.Id !== company.Id));
+        setFilteredCompanies(prev => prev.filter(c => c.Id !== company.Id));
+        toast.success("Company deleted successfully!");
+      } catch (err) {
+        toast.error("Failed to delete company. Please try again.");
+        console.error("Error deleting company:", err);
+      }
+    }
+  };
+
+const handleCloseModal = () => {
     setIsModalOpen(false);
-    setFormData({ name: "", industry: "" });
+    setFormData({ name: "", industry: "", website: "", phone: "" });
     setFormErrors({});
+    setEditingCompany(null);
   };
 
   if (loading) {
@@ -166,17 +225,21 @@ const CompaniesList = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-            >
-              <CompanyCard company={company} />
+>
+              <CompanyCard 
+                company={company} 
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             </motion.div>
           ))}
         </motion.div>
       )}
 
-      <Modal
+<Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title="Add New Company"
+        title={editingCompany ? "Edit Company" : "Add New Company"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <FormField
@@ -200,6 +263,26 @@ const CompaniesList = () => {
             options={industryOptions}
             required
             error={formErrors.industry}
+/>
+          
+          <FormField
+            label="Website"
+            type="text"
+            name="website"
+            value={formData.website}
+            onChange={handleInputChange}
+            placeholder="https://example.com"
+            error={formErrors.website}
+          />
+          
+          <FormField
+            label="Phone Number"
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+            placeholder="+1 (555) 123-4567"
+            error={formErrors.phone}
           />
 
           <div className="flex justify-end space-x-3 pt-4">
@@ -210,8 +293,8 @@ const CompaniesList = () => {
             >
               Cancel
             </Button>
-            <Button type="submit">
-              Add Company
+<Button type="submit">
+              {editingCompany ? "Update Company" : "Add Company"}
             </Button>
           </div>
         </form>

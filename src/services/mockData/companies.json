@@ -3,36 +3,48 @@
     "Id": 1,
     "name": "TechCorp Solutions",
     "industry": "Technology",
+    "website": "https://techcorp.com",
+    "phone": "+1 (555) 123-4567",
     "createdAt": "2023-01-10T08:00:00Z"
   },
   {
     "Id": 2,
     "name": "HealthFirst Medical",
     "industry": "Healthcare",
+    "website": "https://healthfirst.com",
+    "phone": "+1 (555) 234-5678",
     "createdAt": "2023-02-15T10:30:00Z"
   },
   {
     "Id": 3,
     "name": "Global Finance Group",
     "industry": "Finance",
+    "website": "https://globalfinance.com",
+    "phone": "+1 (555) 345-6789",
     "createdAt": "2023-03-20T14:15:00Z"
   },
   {
     "Id": 4,
     "name": "Innovation Manufacturing",
     "industry": "Manufacturing",
+    "website": "https://innovation-mfg.com",
+    "phone": "+1 (555) 456-7890",
     "createdAt": "2023-04-25T09:45:00Z"
   },
   {
     "Id": 5,
     "name": "RetailMax Corporation",
     "industry": "Retail",
+    "website": "https://retailmax.com",
+    "phone": "+1 (555) 567-8901",
     "createdAt": "2023-05-30T12:20:00Z"
   },
   {
     "Id": 6,
     "name": "EduTech Academy",
     "industry": "Education",
+    "website": "https://edutech-academy.com",
+    "phone": "+1 (555) 678-9012",
     "createdAt": "2023-06-10T15:10:00Z"
   }
 ]
