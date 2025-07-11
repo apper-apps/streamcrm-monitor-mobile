@@ -1,0 +1,44 @@
+[
+  {
+    "Id": 1,
+    "name": "Sarah Johnson",
+    "email": "sarah.johnson@email.com",
+    "phone": "+1 (555) 123-4567",
+    "createdAt": "2023-01-15T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Michael Chen",
+    "email": "michael.chen@email.com",
+    "phone": "+1 (555) 234-5678",
+    "createdAt": "2023-02-20T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Emily Rodriguez",
+    "email": "emily.rodriguez@email.com",
+    "phone": "+1 (555) 345-6789",
+    "createdAt": "2023-03-10T09:15:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "David Thompson",
+    "email": "david.thompson@email.com",
+    "phone": "+1 (555) 456-7890",
+    "createdAt": "2023-04-05T16:45:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "Jessica Park",
+    "email": "jessica.park@email.com",
+    "phone": "+1 (555) 567-8901",
+    "createdAt": "2023-05-12T11:20:00Z"
+  },
+  {
+    "Id": 6,
+    "name": "Robert Wilson",
+    "email": "robert.wilson@email.com",
+    "phone": "+1 (555) 678-9012",
+    "createdAt": "2023-06-18T13:00:00Z"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "Id": 1,
+    "name": "Enterprise Software License",
+    "value": 50000,
+    "stage": "Negotiation",
+    "createdAt": "2023-01-05T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Healthcare Management System",
+    "value": 75000,
+    "stage": "Proposal",
+    "createdAt": "2023-02-12T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Financial Analytics Platform",
+    "value": 120000,
+    "stage": "Qualification",
+    "createdAt": "2023-03-18T09:15:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "Manufacturing Automation",
+    "value": 200000,
+    "stage": "Prospecting",
+    "createdAt": "2023-04-22T16:45:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "Retail POS System",
+    "value": 35000,
+    "stage": "Closed Won",
+    "createdAt": "2023-05-08T11:20:00Z"
+  },
+  {
+    "Id": 6,
+    "name": "Education Management Suite",
+    "value": 45000,
+    "stage": "Closed Lost",
+    "createdAt": "2023-06-14T13:00:00Z"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "Id": 1,
+    "name": "TechCorp Solutions",
+    "industry": "Technology",
+    "createdAt": "2023-01-10T08:00:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "HealthFirst Medical",
+    "industry": "Healthcare",
+    "createdAt": "2023-02-15T10:30:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Global Finance Group",
+    "industry": "Finance",
+    "createdAt": "2023-03-20T14:15:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "Innovation Manufacturing",
+    "industry": "Manufacturing",
+    "createdAt": "2023-04-25T09:45:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "RetailMax Corporation",
+    "industry": "Retail",
+    "createdAt": "2023-05-30T12:20:00Z"
+  },
+  {
+    "Id": 6,
+    "name": "EduTech Academy",
+    "industry": "Education",
+    "createdAt": "2023-06-10T15:10:00Z"
+  }
+]
