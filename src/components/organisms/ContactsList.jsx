@@ -18,12 +18,15 @@ const ContactsList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: ""
+    phone: "",
+    jobTitle: "",
+    company: ""
   });
   const [formErrors, setFormErrors] = useState({});
+  const [editingContact, setEditingContact] = useState(null);
 
   const loadContacts = async () => {
     try {
@@ -44,11 +47,13 @@ const ContactsList = () => {
     loadContacts();
   }, []);
 
-  const handleSearch = (searchTerm) => {
+const handleSearch = (searchTerm) => {
     const filtered = contacts.filter(contact =>
       contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.phone.toLowerCase().includes(searchTerm.toLowerCase())
+      contact.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.company?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredContacts(filtered);
   };
@@ -69,7 +74,7 @@ const ContactsList = () => {
     }
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const errors = {};
     
     if (!formData.name.trim()) {
@@ -86,11 +91,19 @@ const ContactsList = () => {
       errors.phone = "Phone number is required";
     }
     
+    if (!formData.jobTitle.trim()) {
+      errors.jobTitle = "Job title is required";
+    }
+    
+    if (!formData.company.trim()) {
+      errors.company = "Company is required";
+    }
+    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -98,23 +111,62 @@ const ContactsList = () => {
     }
 
     try {
-      const newContact = await contactsService.create(formData);
-      setContacts(prev => [...prev, newContact]);
-      setFilteredContacts(prev => [...prev, newContact]);
+      if (editingContact) {
+        const updatedContact = await contactsService.update(editingContact.Id, formData);
+        setContacts(prev => prev.map(contact => 
+          contact.Id === editingContact.Id ? updatedContact : contact
+        ));
+        setFilteredContacts(prev => prev.map(contact => 
+          contact.Id === editingContact.Id ? updatedContact : contact
+        ));
+        toast.success("Contact updated successfully!");
+      } else {
+        const newContact = await contactsService.create(formData);
+        setContacts(prev => [...prev, newContact]);
+        setFilteredContacts(prev => [...prev, newContact]);
+        toast.success("Contact added successfully!");
+      }
       setIsModalOpen(false);
-      setFormData({ name: "", email: "", phone: "" });
+      setFormData({ name: "", email: "", phone: "", jobTitle: "", company: "" });
       setFormErrors({});
-      toast.success("Contact added successfully!");
+      setEditingContact(null);
     } catch (err) {
-      toast.error("Failed to add contact. Please try again.");
-      console.error("Error adding contact:", err);
+      toast.error(editingContact ? "Failed to update contact. Please try again." : "Failed to add contact. Please try again.");
+      console.error("Error saving contact:", err);
+    }
+  };
+
+  const handleEdit = (contact) => {
+    setFormData({
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      jobTitle: contact.jobTitle || "",
+      company: contact.company || ""
+    });
+    setEditingContact(contact);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (contact) => {
+    if (confirm(`Are you sure you want to delete ${contact.name}?`)) {
+      try {
+        await contactsService.delete(contact.Id);
+        setContacts(prev => prev.filter(c => c.Id !== contact.Id));
+        setFilteredContacts(prev => prev.filter(c => c.Id !== contact.Id));
+        toast.success("Contact deleted successfully!");
+      } catch (err) {
+        toast.error("Failed to delete contact. Please try again.");
+        console.error("Error deleting contact:", err);
+      }
     }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setFormData({ name: "", email: "", phone: "" });
+    setFormData({ name: "", email: "", phone: "", jobTitle: "", company: "" });
     setFormErrors({});
+    setEditingContact(null);
   };
 
   if (loading) {
@@ -162,17 +214,21 @@ const ContactsList = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-            >
-              <ContactCard contact={contact} />
+>
+              <ContactCard 
+                contact={contact} 
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             </motion.div>
           ))}
         </motion.div>
       )}
 
-      <Modal
+<Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title="Add New Contact"
+        title={editingContact ? "Edit Contact" : "Add New Contact"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <FormField
@@ -197,7 +253,7 @@ const ContactsList = () => {
             error={formErrors.email}
           />
           
-          <FormField
+<FormField
             label="Phone Number"
             type="tel"
             name="phone"
@@ -207,7 +263,28 @@ const ContactsList = () => {
             required
             error={formErrors.phone}
           />
-
+          
+          <FormField
+            label="Job Title"
+            type="text"
+            name="jobTitle"
+            value={formData.jobTitle}
+            onChange={handleInputChange}
+            placeholder="Enter job title"
+            required
+            error={formErrors.jobTitle}
+          />
+          
+          <FormField
+            label="Company"
+            type="text"
+            name="company"
+            value={formData.company}
+            onChange={handleInputChange}
+            placeholder="Enter company name"
+            required
+            error={formErrors.company}
+          />
           <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"
@@ -216,8 +293,8 @@ const ContactsList = () => {
             >
               Cancel
             </Button>
-            <Button type="submit">
-              Add Contact
+<Button type="submit">
+              {editingContact ? "Update Contact" : "Add Contact"}
             </Button>
           </div>
         </form>
